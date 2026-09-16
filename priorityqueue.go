@@ -25,7 +25,19 @@ func New() *PriorityQueue {
 	return &pq
 }
 
-func (*PriorityQueue) bubbleUp() {}
+func parent(index int) int {
+	return (index - 1) / 3
+}
+
+// progressively swaps element at index with its parent
+// until either element is in root position or it encounters
+// a parent with a higher priority
+func (pq PriorityQueue) bubbleUp(index int) {
+	for {
+		parent(index)
+
+	}
+}
 
 func pushDown() {}
 
