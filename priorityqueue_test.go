@@ -1,6 +1,7 @@
 package priorityqueue
 
 import (
+	"slices"
 	"testing"
 )
 
@@ -11,10 +12,6 @@ func TestNewIsEmpty(t *testing.T) {
 	if len != 0 {
 		t.Errorf("Expected length 0; got %d", len)
 	}
-}
-
-func TestBubbleUp(t *testing.T) {
-
 }
 
 func TestParent(t *testing.T) {
@@ -39,4 +36,31 @@ func TestParent(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestBubbleUp(t *testing.T) {
+	tests := []struct {
+		input    PriorityQueue
+		expected PriorityQueue
+	}{
+		{
+			input:    []Item{{priority: 6, desc: "A"}, {priority: 4, desc: "B"}},
+			expected: []Item{{priority: 4, desc: "B"}, {priority: 6, desc: "A"}},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run("bubble-up", func(t *testing.T) {
+			tt.input.swap(0, 1)
+
+			isEqual := slices.EqualFunc(tt.input, tt.expected, func(x, y Item) bool {
+				return x.priority == y.priority
+			})
+
+			if !isEqual {
+				t.Errorf("swap(input) = expected")
+			}
+		})
+	}
+
 }

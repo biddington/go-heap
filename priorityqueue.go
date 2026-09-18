@@ -29,13 +29,25 @@ func parent(index int) int {
 	return (index - 1) / 3
 }
 
+func (queue *PriorityQueue) swap(parent, child int) {
+	(*queue)[parent], (*queue)[child] = (*queue)[child], (*queue)[parent]
+}
+
 // progressively swaps element at index with its parent
 // until either element is in root position or it encounters
 // a parent with a higher priority
 func (pq PriorityQueue) bubbleUp(index int) {
-	for {
-		parent(index)
 
+	child := index
+
+	for {
+		parent := parent(child)
+
+		for {
+			if pq[parent].priority < pq[child].priority {
+				pq.swap(parent, child)
+			}
+		}
 	}
 }
 
