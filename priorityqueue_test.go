@@ -3,6 +3,8 @@ package priorityqueue
 import (
 	"slices"
 	"testing"
+
+	"pgregory.net/rapid"
 )
 
 func TestNewIsEmpty(t *testing.T) {
@@ -64,3 +66,11 @@ func TestBubbleUp(t *testing.T) {
 	}
 
 }
+
+func TestBubbleUpUp(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		// your test logic
+	})
+}
+
+func TestBubbleUpBubbleUp(t *testing.T) {}

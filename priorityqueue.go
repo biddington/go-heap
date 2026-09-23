@@ -25,7 +25,16 @@ func New() *PriorityQueue {
 	return &pq
 }
 
+// Calculates the would-be parent of index
+//
+// Guards negative index values, or where
+// index would result in a 0 numerator, and
+// returns 0
 func parent(index int) int {
+	if index < 2 {
+		return 0
+	}
+
 	return (index - 1) / 3
 }
 
@@ -38,16 +47,28 @@ func (queue *PriorityQueue) swap(parent, child int) {
 // a parent with a higher priority
 func (pq PriorityQueue) bubbleUp(index int) {
 
+	const ROOT = 0
 	child := index
 
 	for {
+		// We've reached the top of the heap
+		if child == ROOT {
+			break
+		}
+
 		parent := parent(child)
 
-		for {
-			if pq[parent].priority < pq[child].priority {
-				pq.swap(parent, child)
-			}
+		if pq[parent].priority < pq[child].priority {
+			pq.swap(parent, child)
+			// Our bubbling value now lives at parent which we
+			// copy to child for the next loop
+			child = parent
+		} else {
+			// Heap properties have settled so we can exit
+			// the loop and function
+			break
 		}
+
 	}
 }
 
