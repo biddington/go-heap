@@ -7,6 +7,12 @@ import (
 	"pgregory.net/rapid"
 )
 
+func QueuesEqual(input PriorityQueue, expected PriorityQueue) bool {
+	return slices.EqualFunc(input, expected, func(x, y Item) bool {
+		return x.priority == y.priority && x.desc == y.desc
+	})
+}
+
 func TestNewIsEmpty(t *testing.T) {
 	pq := New()
 	len := pq.Len()
@@ -42,35 +48,93 @@ func TestParent(t *testing.T) {
 
 func TestBubbleUp(t *testing.T) {
 	tests := []struct {
-		input    PriorityQueue
+		name     string
+		pq       PriorityQueue
+		index    int
 		expected PriorityQueue
 	}{
 		{
-			input:    []Item{{priority: 6, desc: "A"}, {priority: 4, desc: "B"}},
-			expected: []Item{{priority: 4, desc: "B"}, {priority: 6, desc: "A"}},
+			name:     "swap two elements",
+			pq:       []Item{{priority: 2, desc: "low"}, {priority: 7, desc: "high"}},
+			index:    1,
+			expected: []Item{{priority: 7, desc: "high"}, {priority: 2, desc: "low"}},
+		},
+		{
+			name:     "no swap needed",
+			pq:       []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
+			index:    1,
+			expected: []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 		},
 	}
 
 	for _, tt := range tests {
-		t.Run("bubble-up", func(t *testing.T) {
-			tt.input.swap(0, 1)
+		t.Run(tt.name, func(t *testing.T) {
+			tt.pq.bubbleUp(tt.index)
 
-			isEqual := slices.EqualFunc(tt.input, tt.expected, func(x, y Item) bool {
-				return x.priority == y.priority
-			})
+			areEqual := QueuesEqual(tt.pq, tt.expected)
 
-			if !isEqual {
-				t.Errorf("swap(input) = expected")
+			if !areEqual {
+				t.Errorf("bubbleUp(%d): got %+v; want %+v", tt.index, tt.pq, tt.expected)
 			}
 		})
 	}
 
 }
 
-func TestBubbleUpUp(t *testing.T) {
-	rapid.Check(t, func(t *rapid.T) {
-		// your test logic
-	})
+func TestHeapify(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  []Item
+		output PriorityQueue
+	}{
+		{
+			name:   "Heapify - Single element",
+			input:  []Item{{priority: 9, desc: "Low"}},
+			output: PriorityQueue{{priority: 9, desc: "Low"}},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := heapify(tt.input)
+
+			if !QueuesEqual(got, tt.output) {
+				t.Errorf("Got %v, want %v", got, tt.output)
+			}
+		})
+	}
 }
 
-func TestBubbleUpBubbleUp(t *testing.T) {}
+func BubbleUpUp(t *testing.T) {
+	rapid.Check(t, func(t *rapid.T) {
+		itemGen := rapid.Custom(func(t *rapid.T) Item {
+			return Item{
+				priority: rapid.IntRange(1, 50).Draw(t, "priority"),
+				desc:     "",
+			}
+		})
+
+		items := make([]Item, 5)
+		for i := range items {
+			items[i] = itemGen.Draw(t, "")
+		}
+
+		pq := PriorityQueue(items)
+		parentIndex := parent(4)
+
+		if pq[parentIndex].priority < pq[4].priority {
+			pq.swap(parentIndex, 4)
+		}
+
+		pq.bubbleUp(4)
+
+		n := pq.Len()
+		for i := 0; i < n; i++ {
+			for j := 3*i + 1; j <= 3*i+3 && j < n; j++ {
+				if pq[j].priority > pq[i].priority {
+					t.Fatalf("heap violated: node[%d](%d) < child[%d](%d)", i, pq[i].priority, j, pq[j].priority)
+				}
+			}
+		}
+	})
+}

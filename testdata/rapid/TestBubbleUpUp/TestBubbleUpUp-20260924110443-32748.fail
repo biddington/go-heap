@@ -1,0 +1,23 @@
+# 2026/09/24 11:04:43.605253 [TestBubbleUpUp] [rapid] draw #0: priorityqueue.Item{priority:1, desc:""}
+# 2026/09/24 11:04:43.605287 [TestBubbleUpUp] [rapid] draw #1: priorityqueue.Item{priority:1, desc:""}
+# 2026/09/24 11:04:43.605289 [TestBubbleUpUp] [rapid] draw #2: priorityqueue.Item{priority:1, desc:""}
+# 2026/09/24 11:04:43.605297 [TestBubbleUpUp] [rapid] draw #3: priorityqueue.Item{priority:2, desc:""}
+# 2026/09/24 11:04:43.605298 [TestBubbleUpUp] [rapid] draw #4: priorityqueue.Item{priority:1, desc:""}
+# 2026/09/24 11:04:43.605299 [TestBubbleUpUp] heap violated: node[0](1) < child[3](2)
+# 
+v0.4.8#13731497609639224571
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x0
+0x1
+0x0
+0x0
+0x0

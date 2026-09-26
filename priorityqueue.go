@@ -25,26 +25,28 @@ func New() *PriorityQueue {
 	return &pq
 }
 
-// Calculates the would-be parent of index
-//
-// Guards negative index values, or where
-// index would result in a 0 numerator, and
-// returns 0
+// Calculates the would-be parent of index as if
+// the heap was a tree structure with branching
+// factor 3
 func parent(index int) int {
-	if index < 2 {
-		return 0
-	}
-
 	return (index - 1) / 3
 }
 
-func (queue *PriorityQueue) swap(parent, child int) {
-	(*queue)[parent], (*queue)[child] = (*queue)[child], (*queue)[parent]
+// Swap is essentially a thin wrapper around tuple
+// re-assignment.
+//
+// Take the values at child and parent. Put the
+// child into the parent position and parent into
+// the child position, all without a temp variable
+func (queue PriorityQueue) swap(parent, child int) {
+	queue[parent], queue[child] = queue[child], queue[parent]
 }
 
-// progressively swaps element at index with its parent
-// until either element is in root position or it encounters
-// a parent with a higher priority
+// Progressively swaps element at index with its parent
+// until heap invariants are satisified or element
+// reaches root position.
+//
+// Pre: pq must be a valid heap
 func (pq PriorityQueue) bubbleUp(index int) {
 
 	const ROOT = 0
@@ -74,21 +76,15 @@ func (pq PriorityQueue) bubbleUp(index int) {
 
 func pushDown() {}
 
-func heapify(xs []Item) []Item {
-	return xs
+func heapify(xs []Item) PriorityQueue {
+	return PriorityQueue(xs)
 }
 
-/*
- * + enqueue
- * + dequeue
- * - heapify
- * - pushDown
- * - bubbleUp
- */
-func (PriorityQueue) Enqueue() {
-
+func (pq PriorityQueue) Enqueue(item Item) {
+	pq = append(pq, item)
+	pq.bubbleUp(pq.Len())
 }
 
-func Dequeue() {
+func (pq PriorityQueue) Dequeue() {
 
 }
