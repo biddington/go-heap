@@ -13,6 +13,10 @@ func QueuesEqual(input PriorityQueue, expected PriorityQueue) bool {
 	})
 }
 
+func isMaxHeap(s []Item) {
+
+}
+
 func TestNewIsEmpty(t *testing.T) {
 	pq := New()
 	len := pq.Len()
@@ -54,13 +58,25 @@ func TestBubbleUp(t *testing.T) {
 		expected PriorityQueue
 	}{
 		{
-			name:     "swap two elements",
+			name:     "bubbleUp on an empty queue",
+			pq:       []Item{},
+			index:    0,
+			expected: []Item{},
+		},
+		{
+			name:     "bubbleUp on a queue of 1",
+			pq:       []Item{{priority: 1, desc: "lone task"}},
+			index:    0,
+			expected: []Item{{priority: 1, desc: "lone task"}},
+		},
+		{
+			name:     "bubbleUp on an invalid queue",
 			pq:       []Item{{priority: 2, desc: "low"}, {priority: 7, desc: "high"}},
 			index:    1,
 			expected: []Item{{priority: 7, desc: "high"}, {priority: 2, desc: "low"}},
 		},
 		{
-			name:     "no swap needed",
+			name:     "bubbleUp on a valid queue",
 			pq:       []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 			index:    1,
 			expected: []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},

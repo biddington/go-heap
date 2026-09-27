@@ -53,7 +53,7 @@ func (pq PriorityQueue) bubbleUp(index int) {
 	child := index
 
 	for {
-		// We've reached the top of the heap
+		// Element is now at the top of the heap
 		if child == ROOT {
 			break
 		}
@@ -62,8 +62,8 @@ func (pq PriorityQueue) bubbleUp(index int) {
 
 		if pq[parent].priority < pq[child].priority {
 			pq.swap(parent, child)
-			// Our bubbling value now lives at parent which we
-			// copy to child for the next loop
+			// After swapping, our bubbling value now lives at parent (index)
+			// which we copy to child for the next loop
 			child = parent
 		} else {
 			// Heap properties have settled so we can exit
