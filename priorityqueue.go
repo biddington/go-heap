@@ -32,6 +32,10 @@ func parent(index int) int {
 	return (index - 1) / 3
 }
 
+func highestPriorityChild(index int) int {
+	return 0
+}
+
 // Swap is essentially a thin wrapper around tuple
 // re-assignment.
 //
@@ -82,7 +86,7 @@ func heapify(xs []Item) PriorityQueue {
 
 func (pq PriorityQueue) Enqueue(item Item) {
 	pq = append(pq, item)
-	pq.bubbleUp(pq.Len())
+	pq.bubbleUp(pq.Len() - 1)
 }
 
 func (pq PriorityQueue) Dequeue() {

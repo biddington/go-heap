@@ -3,8 +3,6 @@ package priorityqueue
 import (
 	"slices"
 	"testing"
-
-	"pgregory.net/rapid"
 )
 
 func QueuesEqual(input PriorityQueue, expected PriorityQueue) bool {
@@ -13,8 +11,19 @@ func QueuesEqual(input PriorityQueue, expected PriorityQueue) bool {
 	})
 }
 
-func isMaxHeap(s []Item) {
-
+func isMaxHeap(s []Item) bool {
+	for i := range len(s) {
+		firstChild := 3*i + 1
+		if firstChild >= len(s) {
+			break
+		}
+		for j := firstChild; j < len(s) && j < firstChild+3; j++ {
+			if s[j].priority > s[i].priority {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 func TestNewIsEmpty(t *testing.T) {
@@ -64,22 +73,44 @@ func TestBubbleUp(t *testing.T) {
 			expected: []Item{},
 		},
 		{
-			name:     "bubbleUp on a queue of 1",
+			name:     "bubbleUp a queue of 1",
 			pq:       []Item{{priority: 1, desc: "lone task"}},
 			index:    0,
 			expected: []Item{{priority: 1, desc: "lone task"}},
 		},
 		{
-			name:     "bubbleUp on an invalid queue",
+			name:     "bubbleUp an invalid queue",
 			pq:       []Item{{priority: 2, desc: "low"}, {priority: 7, desc: "high"}},
 			index:    1,
 			expected: []Item{{priority: 7, desc: "high"}, {priority: 2, desc: "low"}},
 		},
 		{
-			name:     "bubbleUp on a valid queue",
+			name:     "bubbleUp a valid queue",
 			pq:       []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 			index:    1,
 			expected: []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
+		},
+		{
+			name: "bubbleUp a valid queue",
+			pq: []Item{
+				{priority: 19, desc: "R"},
+				{priority: 11, desc: "A"},
+				{priority: 12, desc: "B"},
+				{priority: 17, desc: "C"},
+				{priority: 4, desc: "AA"},
+				{priority: 8, desc: "AB"},
+				{priority: 54, desc: "AC"},
+			},
+			index: 6,
+			expected: []Item{
+				{priority: 54, desc: "AC"},
+				{priority: 19, desc: "R"},
+				{priority: 12, desc: "B"},
+				{priority: 17, desc: "C"},
+				{priority: 4, desc: "AA"},
+				{priority: 8, desc: "AB"},
+				{priority: 11, desc: "A"},
+			},
 		},
 	}
 
@@ -119,38 +150,4 @@ func TestHeapify(t *testing.T) {
 			}
 		})
 	}
-}
-
-func BubbleUpUp(t *testing.T) {
-	rapid.Check(t, func(t *rapid.T) {
-		itemGen := rapid.Custom(func(t *rapid.T) Item {
-			return Item{
-				priority: rapid.IntRange(1, 50).Draw(t, "priority"),
-				desc:     "",
-			}
-		})
-
-		items := make([]Item, 5)
-		for i := range items {
-			items[i] = itemGen.Draw(t, "")
-		}
-
-		pq := PriorityQueue(items)
-		parentIndex := parent(4)
-
-		if pq[parentIndex].priority < pq[4].priority {
-			pq.swap(parentIndex, 4)
-		}
-
-		pq.bubbleUp(4)
-
-		n := pq.Len()
-		for i := 0; i < n; i++ {
-			for j := 3*i + 1; j <= 3*i+3 && j < n; j++ {
-				if pq[j].priority > pq[i].priority {
-					t.Fatalf("heap violated: node[%d](%d) < child[%d](%d)", i, pq[i].priority, j, pq[j].priority)
-				}
-			}
-		}
-	})
 }
