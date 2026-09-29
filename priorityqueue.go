@@ -78,7 +78,18 @@ func (pq PriorityQueue) bubbleUp(index int) {
 	}
 }
 
-func pushDown() {}
+// Reinstates heap invariants with respect to
+// an element at index and its children
+//
+// E.g. we've popped the min/max element at
+// the root and replaced it with the element
+// in tail position which will be of lower
+// priority with respect to its (new) children
+func pushDown(index int) {
+	// We want to keep pushing element at index
+	// down as long as it has a lower priority
+	// than _any_ of its children
+}
 
 func heapify(xs []Item) PriorityQueue {
 	return PriorityQueue(xs)
