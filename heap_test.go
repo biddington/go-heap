@@ -1,11 +1,11 @@
-package priorityqueue
+package heap
 
 import (
 	"slices"
 	"testing"
 )
 
-func QueuesEqual(input PriorityQueue, expected PriorityQueue) bool {
+func AreHeapsEqual(input Heap, expected Heap) bool {
 	return slices.EqualFunc(input, expected, func(x, y Item) bool {
 		return x.priority == y.priority && x.desc == y.desc
 	})
@@ -62,9 +62,9 @@ func TestParent(t *testing.T) {
 func TestBubbleUp(t *testing.T) {
 	tests := []struct {
 		name     string
-		pq       PriorityQueue
+		pq       Heap
 		index    int
-		expected PriorityQueue
+		expected Heap
 	}{
 		{
 			name:     "bubbleUp on an empty queue",
@@ -118,7 +118,7 @@ func TestBubbleUp(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.pq.bubbleUp(tt.index)
 
-			areEqual := QueuesEqual(tt.pq, tt.expected)
+			areEqual := AreHeapsEqual(tt.pq, tt.expected)
 
 			if !areEqual {
 				t.Errorf("bubbleUp(%d): got %+v; want %+v", tt.index, tt.pq, tt.expected)
@@ -132,12 +132,12 @@ func TestHeapify(t *testing.T) {
 	tests := []struct {
 		name   string
 		input  []Item
-		output PriorityQueue
+		output Heap
 	}{
 		{
 			name:   "Heapify - Single element",
 			input:  []Item{{priority: 9, desc: "Low"}},
-			output: PriorityQueue{{priority: 9, desc: "Low"}},
+			output: Heap{{priority: 9, desc: "Low"}},
 		},
 	}
 
@@ -145,7 +145,7 @@ func TestHeapify(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := heapify(tt.input)
 
-			if !QueuesEqual(got, tt.output) {
+			if !AreHeapsEqual(got, tt.output) {
 				t.Errorf("Got %v, want %v", got, tt.output)
 			}
 		})

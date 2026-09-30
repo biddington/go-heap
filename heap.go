@@ -1,26 +1,26 @@
-package priorityqueue
+package heap
 
 type Item struct {
 	priority int
 	desc     string
 }
 
-type PriorityQueue []Item
+type Heap []Item
 
-func (pq PriorityQueue) Len() int {
-	return len(pq)
+func (heap Heap) Len() int {
+	return len(heap)
 }
 
-func NewFrom(items []Item) *PriorityQueue {
+func NewFrom(items []Item) *Heap {
 	heapified := heapify(items)
 
-	pq := PriorityQueue(heapified)
+	pq := Heap(heapified)
 
 	return &pq
 }
 
-func New() *PriorityQueue {
-	pq := PriorityQueue(make([]Item, 0, 100))
+func New() *Heap {
+	pq := Heap(make([]Item, 0, 100))
 
 	return &pq
 }
@@ -42,8 +42,8 @@ func highestPriorityChild(index int) int {
 // Take the values at child and parent. Put the
 // child into the parent position and parent into
 // the child position, all without a temp variable
-func (queue PriorityQueue) swap(parent, child int) {
-	queue[parent], queue[child] = queue[child], queue[parent]
+func (heap Heap) swap(parent, child int) {
+	heap[parent], heap[child] = heap[child], heap[parent]
 }
 
 // Progressively swaps element at index with its parent
@@ -51,7 +51,7 @@ func (queue PriorityQueue) swap(parent, child int) {
 // reaches root position.
 //
 // Pre: pq must be a valid heap
-func (pq PriorityQueue) bubbleUp(index int) {
+func (heap Heap) bubbleUp(index int) {
 
 	const ROOT = 0
 	child := index
@@ -64,8 +64,8 @@ func (pq PriorityQueue) bubbleUp(index int) {
 
 		parent := parent(child)
 
-		if pq[parent].priority < pq[child].priority {
-			pq.swap(parent, child)
+		if heap[parent].priority < heap[child].priority {
+			heap.swap(parent, child)
 			// After swapping, our bubbling value now lives at parent (index)
 			// which we copy to child for the next loop
 			child = parent
@@ -78,6 +78,18 @@ func (pq PriorityQueue) bubbleUp(index int) {
 	}
 }
 
+// Returns the highest priority child of element at index
+//
+// Pre: index is within the bounds of the heap
+func (heap Heap) highestPriorityChild(index int) int {
+
+	if index > heap.Len() || index < 0 {
+
+	}
+
+	return 0
+}
+
 // Reinstates heap invariants with respect to
 // an element at index and its children
 //
@@ -85,21 +97,21 @@ func (pq PriorityQueue) bubbleUp(index int) {
 // the root and replaced it with the element
 // in tail position which will be of lower
 // priority with respect to its (new) children
-func pushDown(index int) {
+func (heap Heap) pushDown(index int) {
 	// We want to keep pushing element at index
 	// down as long as it has a lower priority
 	// than _any_ of its children
 }
 
-func heapify(xs []Item) PriorityQueue {
-	return PriorityQueue(xs)
+func heapify(xs []Item) Heap {
+	return Heap(xs)
 }
 
-func (pq PriorityQueue) Enqueue(item Item) {
-	pq = append(pq, item)
-	pq.bubbleUp(pq.Len() - 1)
+func (heap Heap) Insert(item Item) {
+	heap = append(heap, item)
+	heap.bubbleUp(heap.Len() - 1)
 }
 
-func (pq PriorityQueue) Dequeue() {
+func (heap Heap) Take() {
 
 }
