@@ -1,5 +1,12 @@
 package heap
 
+import (
+	"fmt"
+)
+
+// The max number of children each tree node can have
+const BRANCHING_FACTOR = 3
+
 type Item struct {
 	priority int
 	desc     string
@@ -30,10 +37,6 @@ func New() *Heap {
 // factor 3
 func parent(index int) int {
 	return (index - 1) / 3
-}
-
-func highestPriorityChild(index int) int {
-	return 0
 }
 
 // Swap is essentially a thin wrapper around tuple
@@ -78,16 +81,37 @@ func (heap Heap) bubbleUp(index int) {
 	}
 }
 
-// Returns the highest priority child of element at index
+// Returns the index of the highest priority child or -1 if index has no children
 //
 // Pre: index is within the bounds of the heap
-func (heap Heap) highestPriorityChild(index int) int {
+func (heap Heap) highestPriorityChild(index int) (int, error) {
 
-	if index > heap.Len() || index < 0 {
+	// -1 is chosen as the sentinal value because it's outside the range
+	// of values we consider legitimate indexes
+	const NO_CHILDREN = -1
 
+	if index < 0 || index >= heap.Len() {
+		return -1, fmt.Errorf("index %d out of bounds", index)
 	}
 
-	return 0
+	// Calculated first and last child of index
+	firstChild := (index * BRANCHING_FACTOR) + 1
+	lastChild := (index * BRANCHING_FACTOR) + BRANCHING_FACTOR
+
+	child := NO_CHILDREN
+
+	// firstChild and lastChild are calculated and are not gauranteed to be
+	// available on the heap. We need to guard against accessing them if
+	// they're not actually children of index, by testing against heap.Len()
+	for iter := firstChild; iter <= lastChild && iter < heap.Len(); iter++ {
+		if child == NO_CHILDREN {
+			child = iter
+		} else if heap[iter].priority > heap[child].priority {
+			child = iter
+		}
+	}
+
+	return child, nil
 }
 
 // Reinstates heap invariants with respect to
@@ -98,9 +122,23 @@ func (heap Heap) highestPriorityChild(index int) int {
 // in tail position which will be of lower
 // priority with respect to its (new) children
 func (heap Heap) pushDown(index int) {
-	// We want to keep pushing element at index
-	// down as long as it has a lower priority
+	// We want to keep pushing element at index down as long as it has a lower priority
 	// than _any_ of its children
+	// If we're at last position, i.e. there's no children, we stop pushing down
+
+	parent := heap[index]
+
+	for {
+		child, err := heap.highestPriorityChild(index)
+
+		if err != nil {
+			panic(err.Error())
+		}
+
+		if heap[child].priority > parent.priority {
+			heap.swap(index, child)
+		}
+	}
 }
 
 func heapify(xs []Item) Heap {
