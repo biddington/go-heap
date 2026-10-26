@@ -126,8 +126,8 @@ func TestPushDown(t *testing.T) {
 	tests := []struct {
 		desc     string
 		input    Heap
-		index    int
 		expected Heap
+		index    int
 	}{
 		{
 			desc:     "pushDown on an empty heap is a no-op",
@@ -141,12 +141,12 @@ func TestPushDown(t *testing.T) {
 			expected: []Item{{priority: 1, desc: "Half-life 3"}},
 			index:    0,
 		},
-		// {
-		// 	desc:     "pushDown should restore heap invariants when a single node is in violation",
-		// 	input:    []Item{{priority: 16, desc: "16"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 45, desc: "45"}},
-		// 	expected: []Item{{priority: 45, desc: "45"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 16, desc: "16"}},
-		// 	index:    0,
-		// },
+		{
+			desc:     "pushDown should restore heap invariants when a single node is in violation",
+			input:    []Item{{priority: 16, desc: "16"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 45, desc: "45"}},
+			expected: []Item{{priority: 45, desc: "45"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 16, desc: "16"}},
+			index:    0,
+		},
 	}
 
 	for _, tt := range tests {
@@ -155,12 +155,58 @@ func TestPushDown(t *testing.T) {
 
 			areEqual := AreHeapsEqual(tt.input, tt.expected)
 
-			// if !isMaxHeap(tt.input) {
-			// 	t.Errorf("heap invariant violation: got %+v; want %+v", tt.index, tt.expected)
-			// }
-
 			if !areEqual {
 				t.Errorf("pushDown(%d): got %+v; want %+v", tt.index, tt.index, tt.expected)
+			}
+		})
+	}
+}
+
+func TestHighestPriorityChild(t *testing.T) {
+	tests := []struct {
+		desc     string
+		input    Heap
+		expected int
+		index    int
+	}{
+		{
+			desc:     "highestPriorityChild returns -1 when heap has no items",
+			input:    *New(),
+			expected: -1,
+			index:    0,
+		},
+		{
+			desc:     "highestPriorityChild returns -1 when heap has no children",
+			input:    *NewFrom([]Item{{priority: 10, desc: "10"}}),
+			expected: -1,
+			index:    0,
+		},
+		{
+			desc:     "highestPriorityChild returns -1 when node at index has no children",
+			input:    *NewFrom([]Item{{priority: 10, desc: "10"}}),
+			expected: -1,
+			index:    0,
+		},
+		{
+			desc:     "highestPriorityChild returns index when there are children",
+			input:    *NewFrom([]Item{{priority: 40, desc: "40"}, {priority: 10, desc: "10"}}),
+			expected: 1,
+			index:    0,
+		},
+		{
+			desc:     "highestPriorityChild returns index when there are children",
+			input:    *NewFrom([]Item{{priority: 40, desc: "40"}, {priority: 10, desc: "10"}, {priority: 5, desc: "05"}, {priority: 23, desc: "23"}}),
+			expected: 3,
+			index:    0,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			got := tt.input.highestPriorityChildIndex(tt.index)
+
+			if got != tt.expected {
+				t.Errorf("highestPriorityChild(%d) = %d; want %d", tt.index, got, tt.expected)
 			}
 		})
 	}
