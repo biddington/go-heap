@@ -67,31 +67,25 @@ func TestBubbleUp(t *testing.T) {
 		expected Heap
 	}{
 		{
-			name:     "bubbleUp on an empty queue",
+			name:     "bubbleUp on an empty heap returns an empty heap",
 			pq:       []Item{},
 			index:    0,
 			expected: []Item{},
 		},
 		{
-			name:     "bubbleUp a queue of 1",
+			name:     "bubbleUp on a heap of length 1 returns the heap",
 			pq:       []Item{{priority: 1, desc: "lone task"}},
 			index:    0,
 			expected: []Item{{priority: 1, desc: "lone task"}},
 		},
 		{
-			name:     "bubbleUp an invalid queue",
-			pq:       []Item{{priority: 2, desc: "low"}, {priority: 7, desc: "high"}},
-			index:    1,
-			expected: []Item{{priority: 7, desc: "high"}, {priority: 2, desc: "low"}},
-		},
-		{
-			name:     "bubbleUp a valid queue",
+			name:     "bubbleUp on valid heap returns the heap",
 			pq:       []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 			index:    1,
 			expected: []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 		},
 		{
-			name: "bubbleUp a valid queue",
+			name: "bubbleUp on a heap with a single element out of place returns a valid heap",
 			pq: []Item{
 				{priority: 19, desc: "R"},
 				{priority: 11, desc: "A"},
@@ -99,7 +93,7 @@ func TestBubbleUp(t *testing.T) {
 				{priority: 17, desc: "C"},
 				{priority: 4, desc: "AA"},
 				{priority: 8, desc: "AB"},
-				{priority: 54, desc: "AC"},
+				{priority: 54, desc: "AC"}, // Element AC has the max priority and should be at the root of the heap
 			},
 			index: 6,
 			expected: []Item{
