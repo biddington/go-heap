@@ -1,7 +1,7 @@
 package heap
 
 import (
-	"fmt"
+	"errors"
 )
 
 // The max number of children each tree node can have
@@ -81,6 +81,8 @@ func (heap Heap) bubbleUp(index int) {
 	}
 }
 
+var IndexOutOfBounds = errors.New("index out of bounds")
+
 // Returns the index of the highest priority child or -1 if index has no children
 //
 // Pre: index is within the bounds of the heap
@@ -91,7 +93,7 @@ func (heap Heap) highestPriorityChild(index int) (int, error) {
 	const NO_CHILDREN = -1
 
 	if index < 0 || index >= heap.Len() {
-		return -1, fmt.Errorf("index %d out of bounds", index)
+		return -1, IndexOutOfBounds
 	}
 
 	// Calculated first and last child of index
@@ -122,10 +124,15 @@ func (heap Heap) highestPriorityChild(index int) (int, error) {
 // in tail position which will be of lower
 // priority with respect to its (new) children
 func (heap Heap) pushDown(index int) {
+
+	// An empty heap or heap of a single element is by definition, valid
+	if heap.Len() < 2 {
+		return
+	}
+
 	// We want to keep pushing element at index down as long as it has a lower priority
 	// than _any_ of its children
 	// If we're at last position, i.e. there's no children, we stop pushing down
-
 	parent := heap[index]
 
 	for {

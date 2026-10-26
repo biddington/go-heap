@@ -62,31 +62,31 @@ func TestParent(t *testing.T) {
 func TestBubbleUp(t *testing.T) {
 	tests := []struct {
 		name     string
-		pq       Heap
+		input    Heap
 		index    int
 		expected Heap
 	}{
 		{
 			name:     "bubbleUp on an empty heap returns an empty heap",
-			pq:       []Item{},
+			input:    []Item{},
 			index:    0,
 			expected: []Item{},
 		},
 		{
 			name:     "bubbleUp on a heap of length 1 returns the heap",
-			pq:       []Item{{priority: 1, desc: "lone task"}},
+			input:    []Item{{priority: 1, desc: "lone task"}},
 			index:    0,
 			expected: []Item{{priority: 1, desc: "lone task"}},
 		},
 		{
 			name:     "bubbleUp on valid heap returns the heap",
-			pq:       []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
+			input:    []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 			index:    1,
 			expected: []Item{{priority: 9, desc: "root"}, {priority: 4, desc: "child"}},
 		},
 		{
 			name: "bubbleUp on a heap with a single element out of place returns a valid heap",
-			pq: []Item{
+			input: []Item{
 				{priority: 19, desc: "R"},
 				{priority: 11, desc: "A"},
 				{priority: 12, desc: "B"},
@@ -110,12 +110,12 @@ func TestBubbleUp(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.pq.bubbleUp(tt.index)
+			tt.input.bubbleUp(tt.index)
 
-			areEqual := AreHeapsEqual(tt.pq, tt.expected)
+			areEqual := AreHeapsEqual(tt.input, tt.expected)
 
 			if !areEqual {
-				t.Errorf("bubbleUp(%d): got %+v; want %+v", tt.index, tt.pq, tt.expected)
+				t.Errorf("bubbleUp(%d): got %+v; want %+v", tt.index, tt.input, tt.expected)
 			}
 		})
 	}
@@ -123,7 +123,47 @@ func TestBubbleUp(t *testing.T) {
 }
 
 func TestPushDown(t *testing.T) {
+	tests := []struct {
+		desc     string
+		input    Heap
+		index    int
+		expected Heap
+	}{
+		{
+			desc:     "pushDown on an empty heap is a no-op",
+			input:    []Item{},
+			expected: []Item{},
+			index:    0,
+		},
+		{
+			desc:     "pushDown on a heap of a single value is a no-op",
+			input:    []Item{{priority: 1, desc: "Half-life 3"}},
+			expected: []Item{{priority: 1, desc: "Half-life 3"}},
+			index:    0,
+		},
+		// {
+		// 	desc:     "pushDown should restore heap invariants when a single node is in violation",
+		// 	input:    []Item{{priority: 16, desc: "16"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 45, desc: "45"}},
+		// 	expected: []Item{{priority: 45, desc: "45"}, {priority: 23, desc: "23"}, {priority: 27, desc: "27"}, {priority: 16, desc: "16"}},
+		// 	index:    0,
+		// },
+	}
 
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			tt.input.pushDown(tt.index)
+
+			areEqual := AreHeapsEqual(tt.input, tt.expected)
+
+			// if !isMaxHeap(tt.input) {
+			// 	t.Errorf("heap invariant violation: got %+v; want %+v", tt.index, tt.expected)
+			// }
+
+			if !areEqual {
+				t.Errorf("pushDown(%d): got %+v; want %+v", tt.index, tt.index, tt.expected)
+			}
+		})
+	}
 }
 
 func TestHeapify(t *testing.T) {
